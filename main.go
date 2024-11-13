@@ -33,42 +33,58 @@ func init() {
 }
 
 func list(t *todos.Todos) {
-	es := t.List()
-	if len(es) == 0 {
-		fmt.Println("Nothing todo :)")
+	ts := t.List()
+	if len(ts) == 0 {
+		fmt.Println("Nothing to do :)")
 		return
 	}
 
-	for _, e := range es {
+	for _, e := range ts {
 		fmt.Printf("%s\nid: %d\nCreated at: %s\n=====\n", e.Text, e.ID, e.CreatedAt.Format(time.DateTime))
 	}
 }
+
+const help = `
+todo is a utility for managing a simple todo list. 
+
+Usage:
+  todo add <description>            Add an item to the list
+  todo ls                           List items to be done 
+  todo done <id>                    Mark an item as done 
+  todo nuke                         Remove all items
+  todo help                         Display this help
+  todo config                       Display your current config
+`
 
 func main() {
 	switch os.Args[1] {
 	case "add":
 		txt := strings.Join(os.Args[2:], " ")
 		t.Add(txt)
-	case "list":
+	case "ls":
 		list(t)
 	case "done":
 		inputId := os.Args[2]
 		id, err := strconv.Atoi(inputId)
 		if err != nil {
-			panic(err)
+			fmt.Println(`"todo done" expects an integer id, e.g. "todo done 4"`)
+			os.Exit(1)
 		}
-		err = t.MarkDone(id)
-		if err != nil {
-			panic(err)
+		if !t.MarkDone(id) {
+			fmt.Println("No task with that id")
 		}
 	case "nuke":
-		err := t.Nuke()
+		t.Nuke()
+	case "config":
+		bs, err := json.Marshal(cfg)
 		if err != nil {
 			panic(err)
 		}
-
+		fmt.Printf("%s\n", string(bs))
+	case "help":
+		fmt.Print(help)
 	default:
-		fmt.Println("expected `add` command")
+		fmt.Print(help)
 		os.Exit(1)
 	}
 

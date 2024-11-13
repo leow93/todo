@@ -14,10 +14,6 @@ type Config struct {
 	TodoDir  string
 }
 
-func getHome() (string, error) {
-	return os.UserHomeDir()
-}
-
 func configHome(home string) string {
 	return fmt.Sprintf("%s/.config/todo", home)
 }
@@ -27,7 +23,7 @@ func configLocation(configHome string) string {
 }
 
 func Read() (Config, error) {
-	home, err := getHome()
+	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("home not found: %s", err.Error())
 	}
@@ -43,7 +39,6 @@ func Read() (Config, error) {
 			}, nil
 		}
 
-		fmt.Println("not PATH ERROR", err)
 		return Config{}, err
 	}
 

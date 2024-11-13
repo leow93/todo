@@ -41,21 +41,22 @@ func (t *Todos) List() []Entry {
 	return *t.Entries
 }
 
-func (t *Todos) MarkDone(id int) error {
+func (t *Todos) MarkDone(id int) bool {
 	var entries []Entry
+	removed := false
 	for _, e := range *t.Entries {
 		if e.ID != id {
 			entries = append(entries, e)
+		} else {
+			removed = true
 		}
 	}
 
 	t.Entries = &entries
-
-	return nil
+	return removed
 }
 
-func (t *Todos) Nuke() error {
+func (t *Todos) Nuke() {
 	var entries []Entry
 	t.Entries = &entries
-	return nil
 }
