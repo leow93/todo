@@ -54,6 +54,7 @@ Usage:
   todo nuke                         Remove all items
   todo help                         Display this help
   todo config                       Display your current config
+  todo config edit                  COMING SOON: Allows you to edit your config in your $EDITOR
 `
 
 func main() {
