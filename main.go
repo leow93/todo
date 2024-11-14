@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -44,6 +46,20 @@ func list(t *todos.Todos) {
 	}
 }
 
+func editConfig() error {
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		return errors.New("no $EDITOR")
+	}
+	file := cfg.ConfigFile()
+	cmd := exec.Command(editor, file)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
 const help = `
 todo is a utility for managing a simple todo list. 
 
@@ -77,6 +93,20 @@ func main() {
 	case "nuke":
 		t.Nuke()
 	case "config":
+		if len(os.Args) > 2 {
+			edit := os.Args[2]
+			if edit == "edit" {
+				err := editConfig()
+				if err != nil {
+					panic(err)
+				}
+				return
+			}
+			fmt.Println("Unknown command")
+			fmt.Print(help)
+			os.Exit(1)
+		}
+
 		bs, err := json.Marshal(cfg)
 		if err != nil {
 			panic(err)

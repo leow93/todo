@@ -7,11 +7,20 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"strings"
 )
 
 type Config struct {
-	TodoFile string
-	TodoDir  string
+	TodosFile  string
+	configFile string
+}
+
+func (c Config) ConfigFile() string {
+	return c.configFile
+}
+
+func (c Config) Dir() string {
+	return strings.TrimSuffix(c.TodosFile, "todos.json")
 }
 
 func configHome(home string) string {
@@ -20,6 +29,14 @@ func configHome(home string) string {
 
 func configLocation(configHome string) string {
 	return fmt.Sprintf("%s/config.json", configHome)
+}
+
+func writeConfig(path string, cfg Config) error {
+	bs, err := json.Marshal(cfg)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, bs, 0644)
 }
 
 func Read() (Config, error) {
@@ -33,10 +50,14 @@ func Read() (Config, error) {
 	content, err := os.ReadFile(cfgLocation)
 	if err != nil {
 		if e, ok := err.(*fs.PathError); ok && errors.Is(e.Unwrap(), fs.ErrNotExist) {
-			return Config{
-				TodoFile: home + "/.config/todo/todos.json",
-				TodoDir:  cfgHome,
-			}, nil
+			// write default config
+			cfg := Config{
+				TodosFile:  home + "/.config/todo/todos.json",
+				configFile: cfgLocation,
+			}
+			err := writeConfig(cfgLocation, cfg)
+
+			return cfg, err
 		}
 
 		return Config{}, err
@@ -48,7 +69,7 @@ func Read() (Config, error) {
 	}
 
 	return Config{
-		TodoFile: cfg.TodoFile,
-		TodoDir:  cfgHome,
+		TodosFile:  cfg.TodosFile,
+		configFile: cfgLocation,
 	}, nil
 }

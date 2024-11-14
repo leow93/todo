@@ -16,14 +16,14 @@ func noSuchFile(err error) bool {
 }
 
 func initialise(cfg config.Config) error {
-	_, err := os.Stat(cfg.TodoFile)
+	_, err := os.Stat(cfg.TodosFile)
 
 	if err != nil && noSuchFile(err) {
-		if err = os.MkdirAll(cfg.TodoDir, os.ModePerm); err != nil {
+		if err = os.MkdirAll(cfg.Dir(), os.ModePerm); err != nil {
 			return err
 		}
 
-		f, err := os.Create(cfg.TodoFile)
+		f, err := os.Create(cfg.TodosFile)
 		if err != nil {
 			return err
 		}
@@ -54,7 +54,7 @@ func Read(cfg config.Config) (*todos.Todos, error) {
 		return nil, err
 	}
 
-	bs, err := os.ReadFile(cfg.TodoFile)
+	bs, err := os.ReadFile(cfg.TodosFile)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func Read(cfg config.Config) (*todos.Todos, error) {
 }
 
 func Write(cfg config.Config, data []byte) error {
-	f, err := os.OpenFile(cfg.TodoFile, os.O_WRONLY, 0644)
+	f, err := os.OpenFile(cfg.TodosFile, os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
