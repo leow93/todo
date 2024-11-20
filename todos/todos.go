@@ -32,7 +32,7 @@ func (t *Todos) Add(txt string) {
 	entries = append(entries, Entry{
 		ID:        id,
 		Text:      txt,
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().In(time.Local),
 	})
 	t.Entries = &entries
 }

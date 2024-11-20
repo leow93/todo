@@ -15,6 +15,6 @@ func List(t *todos.Todos) {
 	}
 
 	for _, e := range ts {
-		fmt.Printf("%s\nid: %d\nCreated at: %s\n=====\n", e.Text, e.ID, e.CreatedAt.Format(time.RFC1123))
+		fmt.Printf("%s\nid: %d\nCreated at: %s\n=====\n", e.Text, e.ID, e.CreatedAt.Format(time.RFC1123Z))
 	}
 }
