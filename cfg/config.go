@@ -1,4 +1,4 @@
-package config
+package cfg
 
 import (
 	"encoding/json"
@@ -12,15 +12,10 @@ import (
 
 type Config struct {
 	TodosFile string
-	cfgFile   string
 }
 
-func (c *Config) Dir() string {
+func (c Config) Dir() string {
 	return strings.TrimSuffix(c.TodosFile, "todos.json")
-}
-
-func (c *Config) ConfigFile() string {
-	return c.cfgFile
 }
 
 func configHome(home string) string {
@@ -48,7 +43,7 @@ func writeConfig(path string, cfg Config) error {
 	return os.WriteFile(path, bs, 0644)
 }
 
-func Read() (*Config, error) {
+func New() (Config, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatalf("home not found: %s", err.Error())
@@ -63,21 +58,20 @@ func Read() (*Config, error) {
 			// write default config
 			cfg := Config{
 				TodosFile: todosLocation,
-				cfgFile:   cfgLocation,
 			}
 			err := writeConfig(cfgLocation, cfg)
-			return &cfg, err
+			return cfg, err
 
 		}
-		return &Config{}, err
+		return Config{}, err
 	}
 
 	var cfg Config
 	if err = json.Unmarshal(content, &cfg); err != nil {
-		return &Config{}, err
+		return Config{}, err
 	}
 
-	return &Config{
+	return Config{
 		TodosFile: cfg.TodosFile,
 	}, nil
 }

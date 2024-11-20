@@ -1,64 +1,12 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
-	"os/exec"
-	"strconv"
 	"strings"
-	"time"
 
-	"github.com/leow93/todo/config"
-	"github.com/leow93/todo/storage"
-	"github.com/leow93/todo/todos"
+	"github.com/leow93/todo/cmd"
 )
-
-var (
-	cfg config.Config
-	t   *todos.Todos
-)
-
-func init() {
-	c, err := config.Read()
-	if err != nil {
-		panic(err)
-	}
-	cfg = c
-
-	ts, err := storage.Read(cfg)
-	if err != nil {
-		panic(err)
-	}
-	t = ts
-}
-
-func list(t *todos.Todos) {
-	ts := t.List()
-	if len(ts) == 0 {
-		fmt.Println("Nothing to do :)")
-		return
-	}
-
-	for _, e := range ts {
-		fmt.Printf("%s\nid: %d\nCreated at: %s\n=====\n", e.Text, e.ID, e.CreatedAt.Format(time.DateTime))
-	}
-}
-
-func editConfig() error {
-	editor := os.Getenv("EDITOR")
-	if editor == "" {
-		return errors.New("no $EDITOR")
-	}
-	file := cfg.ConfigFile()
-	cmd := exec.Command(editor, file)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	return cmd.Run()
-}
 
 const help = `
 todo is a utility for managing a simple todo list. 
@@ -74,32 +22,28 @@ Usage:
 `
 
 func main() {
+	c, t, err := cmd.Init()
+	if err != nil {
+		fmt.Printf("Fatal error: %s\n", err.Error())
+		os.Exit(1)
+	}
+
 	switch os.Args[1] {
 	case "add":
 		txt := strings.Join(os.Args[2:], " ")
-		t.Add(txt)
+		cmd.Add(c, t, txt)
 	case "ls":
-		list(t)
+		cmd.List(t)
 	case "done":
 		inputId := os.Args[2]
-		id, err := strconv.Atoi(inputId)
-		if err != nil {
-			fmt.Println(`"todo done" expects an integer id, e.g. "todo done 4"`)
-			os.Exit(1)
-		}
-		if !t.MarkDone(id) {
-			fmt.Println("No task with that id")
-		}
+		cmd.Done(c, t, inputId)
 	case "nuke":
-		t.Nuke()
+		cmd.Nuke(c, t)
 	case "config":
 		if len(os.Args) > 2 {
 			edit := os.Args[2]
 			if edit == "edit" {
-				err := editConfig()
-				if err != nil {
-					panic(err)
-				}
+				cmd.EditConfig(c)
 				return
 			}
 			fmt.Println("Unknown command")
@@ -107,24 +51,11 @@ func main() {
 			os.Exit(1)
 		}
 
-		bs, err := json.Marshal(cfg)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Printf("%s\n", string(bs))
+		cmd.PrintConfig(c)
 	case "help":
 		fmt.Print(help)
 	default:
 		fmt.Print(help)
 		os.Exit(1)
-	}
-
-	data, err := json.Marshal(*t)
-	if err != nil {
-		panic(err)
-	}
-	err = storage.Write(cfg, data)
-	if err != nil {
-		panic(err)
 	}
 }

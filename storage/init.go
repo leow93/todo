@@ -15,7 +15,7 @@ func noSuchFile(err error) bool {
 	return ok && errors.Is(e.Unwrap(), fs.ErrNotExist)
 }
 
-func initialise(cfg config.Config) error {
+func initialise(cfg *config.Config) error {
 	_, err := os.Stat(cfg.TodosFile)
 
 	if err != nil && noSuchFile(err) {
@@ -48,7 +48,7 @@ func initialise(cfg config.Config) error {
 	return err
 }
 
-func Read(cfg config.Config) (*todos.Todos, error) {
+func Read(cfg *config.Config) (*todos.Todos, error) {
 	err := initialise(cfg)
 	if err != nil {
 		return nil, err
@@ -71,7 +71,7 @@ func Read(cfg config.Config) (*todos.Todos, error) {
 	return &ts, err
 }
 
-func Write(cfg config.Config, data []byte) error {
+func Write(cfg *config.Config, data []byte) error {
 	f, err := os.OpenFile(cfg.TodosFile, os.O_WRONLY, 0644)
 	if err != nil {
 		return err
