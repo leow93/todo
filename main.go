@@ -28,6 +28,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	if len(os.Args) == 1 {
+		fmt.Print(help)
+		return
+	}
+
 	switch os.Args[1] {
 	case "add":
 		txt := strings.Join(os.Args[2:], " ")
@@ -55,6 +60,7 @@ func main() {
 	case "help":
 		fmt.Print(help)
 	default:
+		fmt.Println("Unknown command")
 		fmt.Print(help)
 		os.Exit(1)
 	}
