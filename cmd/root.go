@@ -13,9 +13,6 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "todo",
 	Short: "todo is a simple todo list manager",
-	Run: func(cmd *cobra.Command, args []string) {
-		// Do Stuff Here
-	},
 }
 
 var (
@@ -42,7 +39,7 @@ func initConfig() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.AddCommand(configCmd, listCmd, addCmd, doneCmd, nukeCmd)
+	rootCmd.AddCommand(configCmd, listCmd, addCmd, doneCmd, nukeCmd, remoteCmd)
 }
 
 func Execute() {
