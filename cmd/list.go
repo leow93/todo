@@ -3,17 +3,21 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/leow93/todo/todos"
+	"github.com/spf13/cobra"
 )
 
-func List(t *todos.Todos) {
-	ts := t.List()
-	if len(ts) == 0 {
-		fmt.Println("Nothing to do :)")
-		return
-	}
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List things to do",
+	Run: func(cmd *cobra.Command, args []string) {
+		ts := todoList.List()
+		if len(ts) == 0 {
+			fmt.Println("Nothing to do :)")
+			return
+		}
 
-	for _, e := range ts {
-		fmt.Printf("id: %d\n%s\n\n", e.ID, e.Text)
-	}
+		for _, e := range ts {
+			fmt.Printf("id: %d\n%s\n\n", e.ID, e.Text)
+		}
+	},
 }

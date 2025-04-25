@@ -6,26 +6,31 @@ import (
 	"os"
 	"strings"
 
-	"github.com/leow93/todo/config"
-	"github.com/leow93/todo/todos"
+	"github.com/spf13/cobra"
 )
 
-func Nuke(cfg *config.Config, t *todos.Todos) {
-	fmt.Println("This action will delete all your todos. Are you absolutely sure? (y/n)")
-	input := bufio.NewScanner(os.Stdin)
-	input.Scan()
-	answer := input.Text()
-	if err := input.Err(); err != nil {
-		panic(err)
-	}
+var nukeCmd = &cobra.Command{
+	Use:   "nuke",
+	Short: "Delete all your todos",
+	Long:  "Destructive action that will remove all your todos from the list and reset your id counter.",
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("This action will delete all your todos. Are you absolutely sure? (y/n)")
+		input := bufio.NewScanner(os.Stdin)
+		input.Scan()
+		answer := input.Text()
+		if err := input.Err(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 
-	if strings.ToLower(answer) != "y" {
-		return
-	}
+		if strings.ToLower(answer) != "y" {
+			return
+		}
 
-	t.Nuke()
+		todoList.Nuke()
 
-	write(cfg, t)
+		write(cfg, todoList)
 
-	fmt.Println("Todos deleted")
+		fmt.Println("Todos deleted")
+	},
 }
