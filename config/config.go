@@ -79,5 +79,6 @@ func Read() (*Config, error) {
 
 	return &Config{
 		TodosFile: cfg.TodosFile,
+		cfgFile:   cfgLocation,
 	}, nil
 }
