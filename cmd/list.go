@@ -7,8 +7,9 @@ import (
 )
 
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List things to do",
+	Use:     "list",
+	Short:   "List things to do",
+	Aliases: []string{"ls"},
 	Run: func(cmd *cobra.Command, args []string) {
 		ts := todoList.List()
 		if len(ts) == 0 {
