@@ -4,8 +4,9 @@ A simple todo list manager app.
 
 ## Storage
 
-`todo` will add a config.json file and a todos.json file under `~/.config/todo/`
-Make sure those files are available to be used.
+`todo` will add a config.json file and a todos.json file under `~/.config/todo/`.
+
+Before using, make sure those files are available to be used and won't overwrite anything important.
 
 ## Build
 
