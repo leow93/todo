@@ -2,9 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 )
+
+func printfln(format string, a ...any) {
+	fmt.Printf(format+"\n", a...)
+}
 
 var listCmd = &cobra.Command{
 	Use:     "list",
@@ -18,7 +23,13 @@ var listCmd = &cobra.Command{
 		}
 
 		for _, e := range ts {
-			fmt.Printf("id: %d\n%s\n\n", e.ID, e.Text)
+			printfln("%s", e.Text)
+			printfln("id: %d", e.ID)
+			if e.Due != nil {
+				d := *e.Due
+				printfln("due: %s", d.Format(time.DateTime))
+			}
+			printfln("")
 		}
 	},
 }

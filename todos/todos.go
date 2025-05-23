@@ -8,6 +8,7 @@ type Entry struct {
 	CreatedAt time.Time
 	Text      string
 	ID        int
+	Due       *time.Time
 }
 
 type Todos struct {
@@ -23,7 +24,7 @@ func New() *Todos {
 	}
 }
 
-func (t *Todos) Add(txt string) {
+func (t *Todos) Add(txt string, due *time.Time) {
 	id := t.Counter + 1
 	t.Counter = id
 
@@ -33,6 +34,7 @@ func (t *Todos) Add(txt string) {
 		ID:        id,
 		Text:      txt,
 		CreatedAt: time.Now().In(time.Local),
+		Due:       due,
 	})
 	t.Entries = &entries
 }
