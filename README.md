@@ -23,3 +23,8 @@ todo ls
 
 todo done 1
 ```
+
+## Notes
+
+`todo` will add a config.json file and a todos.json file under ~/.config/todo/
+Make sure those files are available to be used.
