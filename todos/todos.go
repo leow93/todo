@@ -62,3 +62,15 @@ func (t *Todos) Nuke() {
 	var entries []Entry
 	t.Entries = &entries
 }
+
+func (t *Todos) ResetCounter() {
+	var entries []Entry
+	curr := *t.Entries
+	for i, e := range curr[:] {
+		e.ID = i + 1
+		entries = append(entries, e)
+	}
+	l := len(*t.Entries)
+	t.Counter = l
+	t.Entries = &entries
+}

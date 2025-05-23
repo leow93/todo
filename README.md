@@ -11,6 +11,11 @@ go build -o todo main.go
 ## Add to path
 
 Just put the binary somewhere in your path.
+I've added `~/.config/todo` to my path, so it's as simple as:
+
+```sh
+cp ./todo ~/.config/todo
+```
 
 ## Run
 
