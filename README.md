@@ -1,6 +1,6 @@
 # todo
 
-Simple todo list manager for the CLI.
+A simple todo list manager app.
 
 ## Storage
 
